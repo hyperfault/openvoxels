@@ -32,13 +32,22 @@ function ChatApp() {
   const messages = currentSession?.messages || [];
 
   useEffect(() => {
-    if (isGuest) return;
+    if (isGuest) return; // Guests are fine
     const supabase = createClient();
     if (!supabase) return;
     supabase.auth.getUser().then(({ data }) => {
-      if (!data.user) { router.push("/"); return; }
+      if (!data.user) {
+        // No redirect—just set guest mode if not signed in
+        setUser(null);
+        setUsername("guest");
+        return;
+      }
       setUser(data.user);
-      setUsername(data.user.user_metadata?.username || data.user.email?.split("@")[0] || "user");
+      setUsername(
+        data.user.user_metadata?.username ||
+        data.user.email?.split("@")[0] ||
+        "user"
+      );
     });
   }, [router, isGuest]);
 
@@ -352,11 +361,11 @@ export default function ChatPage() {
 const c = {
   layout: { display: "flex", height: "100vh", overflow: "hidden", background: "var(--bg)", position: "relative" },
   sidebarOverlay: { position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 5 },
-  sidebar: { width: "240px", minWidth: "240px", borderRight: "1px solid var(--border)", display: "flex", flexDirection: "column", background: "var(--surface)", position: "fixed", left: 0, top: 0, height: "100vh", zIndex: 10, transform: "translateX(-100%)", transition: "transform 0.25s ease" },
+  sidebar: { width: "240px", minWidth: "240px", borderRight: "1px solid var(--border)", display: "flex", flexDirection: "column", background: "var(--surface)", position: "fixed", left: 0, top: 0,[...]
   sidebarVisible: { transform: "translateX(0)" },
   sidebarHeader: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 16px", borderBottom: "1px solid var(--border)" },
   sidebarLogo: { fontSize: "13px", fontWeight: "700", color: "#d0d0d0" },
-  newChatBtn: { background: "none", border: "1px solid var(--border2)", color: "var(--text-dim)", fontFamily: "var(--font)", fontSize: "16px", width: "26px", height: "26px", cursor: "pointer", borderRadius: "2px" },
+  newChatBtn: { background: "none", border: "1px solid var(--border2)", color: "var(--text-dim)", fontFamily: "var(--font)", fontSize: "16px", width: "26px", height: "26px", cursor: "pointer", bo[...]
   sessionList: { flex: 1, overflowY: "auto", padding: "8px", display: "flex", flexDirection: "column", gap: "2px" },
   sessionItem: { display: "flex", alignItems: "center", gap: "8px", padding: "7px 10px", borderRadius: "3px", cursor: "pointer", color: "var(--text-dim)", fontSize: "12px" },
   sessionActive: { background: "var(--surface2)", color: "var(--text)", border: "1px solid var(--border)" },
@@ -373,13 +382,13 @@ const c = {
   loadRow: { display: "flex", alignItems: "center", gap: "4px" },
   loadDot: { width: "5px", height: "5px", borderRadius: "50%", background: "var(--green)", display: "block", animation: "pulse 1s ease-in-out infinite" },
   loadText: { fontSize: "10px", color: "var(--text-muted)", marginLeft: "4px" },
-  avatarBtn: { width: "30px", height: "30px", borderRadius: "50%", background: "var(--surface2)", border: "1px solid var(--border2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", fontWeight: "600", color: "var(--text)", cursor: "pointer", position: "relative" },
-  menu: { position: "absolute", top: "40px", right: 0, background: "var(--surface)", border: "1px solid var(--border2)", borderRadius: "4px", width: "200px", zIndex: 100, overflow: "hidden", animation: "fadeUp 0.15s ease", boxShadow: "0 8px 32px rgba(0,0,0,0.4)" },
+  avatarBtn: { width: "30px", height: "30px", borderRadius: "50%", background: "var(--surface2)", border: "1px solid var(--border2)", display: "flex", alignItems: "center", justifyContent: "cente[...]
+  menu: { position: "absolute", top: "40px", right: 0, background: "var(--surface)", border: "1px solid var(--border2)", borderRadius: "4px", width: "200px", zIndex: 100, overflow: "hidden", anim[...]
   menuHeader: { padding: "12px 14px" },
   menuName: { fontSize: "13px", color: "var(--text)", fontWeight: "500" },
   menuEmail: { fontSize: "11px", color: "var(--text-dim)", marginTop: "2px" },
   menuDivider: { height: "1px", background: "var(--border)" },
-  menuItem: { display: "block", width: "100%", background: "none", border: "none", color: "var(--text-dim)", fontFamily: "var(--font)", fontSize: "12px", padding: "9px 14px", cursor: "pointer", textAlign: "left" },
+  menuItem: { display: "block", width: "100%", background: "none", border: "none", color: "var(--text-dim)", fontFamily: "var(--font)", fontSize: "12px", padding: "9px 14px", cursor: "pointer", t[...]
   messages: { flex: 1, overflowY: "auto", padding: "24px", display: "flex", flexDirection: "column", gap: "18px" },
   empty: { display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", flex: 1, gap: "8px", marginTop: "80px", animation: "fadeIn 0.4s ease" },
   emptyLogo: { fontSize: "26px", fontWeight: "700", color: "#222" },
@@ -398,33 +407,34 @@ const c = {
   thinkDot: { width: "5px", height: "5px", borderRadius: "50%", background: "var(--text-muted)", display: "block", animation: "pulse 1s ease-in-out infinite" },
   thinkText: { fontSize: "11px", color: "var(--text-muted)", fontStyle: "italic", marginLeft: "4px" },
   inputBar: { display: "flex", alignItems: "flex-end", gap: "8px", padding: "14px 20px 20px", borderTop: "1px solid var(--border)", background: "var(--surface)" },
-  configBtn: { background: "none", border: "1px solid var(--border2)", color: "var(--text-dim)", fontFamily: "var(--font)", fontSize: "16px", width: "42px", height: "42px", cursor: "pointer", borderRadius: "3px" },
+  configBtn: { background: "none", border: "1px solid var(--border2)", color: "var(--text-dim)", fontFamily: "var(--font)", fontSize: "16px", width: "42px", height: "42px", cursor: "pointer", bor[...]
   inputPromptLabel: { fontSize: "12px", color: "var(--green)", paddingBottom: "10px", flexShrink: 0, whiteSpace: "nowrap" },
-  input: { flex: 1, background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: "3px", color: "var(--text)", fontFamily: "var(--font)", fontSize: "13px", padding: "10px 14px", resize: "none", outline: "none" },
-  sendBtn: { background: "var(--surface2)", border: "1px solid var(--border2)", color: "var(--text)", fontFamily: "var(--font)", fontSize: "16px", width: "42px", height: "42px", cursor: "pointer", borderRadius: "3px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 },
-  overlay: { position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, backdropFilter: "blur(4px)", padding: "16px" },
-  configModal: { background: "var(--surface)", border: "1px solid var(--border2)", borderRadius: "6px", padding: "24px", width: "100%", maxWidth: "560px", maxHeight: "85vh", overflowY: "auto", display: "flex", flexDirection: "column", gap: "20px", animation: "fadeUp 0.2s ease", boxShadow: "0 20px 60px rgba(0,0,0,0.5)" },
-  settingsModal: { background: "var(--surface)", border: "1px solid var(--border2)", borderRadius: "6px", padding: "24px", width: "100%", maxWidth: "380px", display: "flex", flexDirection: "column", gap: "4px", animation: "fadeUp 0.2s ease" },
+  input: { flex: 1, background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: "3px", color: "var(--text)", fontFamily: "var(--font)", fontSize: "13px", padding: "10px 14px",[...]
+  sendBtn: { background: "var(--surface2)", border: "1px solid var(--border2)", color: "var(--text)", fontFamily: "var(--font)", fontSize: "16px", width: "42px", height: "42px", cursor: "pointer"[...]
+  overlay: { position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, backdropFilter: "blur(4px)", padding: "16p[...]
+  configModal: { background: "var(--surface)", border: "1px solid var(--border2)", borderRadius: "6px", padding: "24px", width: "100%", maxWidth: "560px", maxHeight: "85vh", overflowY: "auto", di[...]
+  settingsModal: { background: "var(--surface)", border: "1px solid var(--border2)", borderRadius: "6px", padding: "24px", width: "100%", maxWidth: "380px", display: "flex", flexDirection: "colum[...]
   modalHdr: { display: "flex", justifyContent: "space-between", alignItems: "center" },
   modalHdrTitle: { fontSize: "14px", fontWeight: "600", color: "#d0d0d0" },
   modalHdrRight: { display: "flex", alignItems: "center", gap: "10px" },
-  resetBtn: { background: "none", border: "1px solid var(--border2)", color: "var(--text-dim)", fontFamily: "var(--font)", fontSize: "11px", padding: "4px 10px", cursor: "pointer", borderRadius: "2px" },
+  resetBtn: { background: "none", border: "1px solid var(--border2)", color: "var(--text-dim)", fontFamily: "var(--font)", fontSize: "11px", padding: "4px 10px", cursor: "pointer", borderRadius: [...]
   modalCloseBtn: { background: "none", border: "none", color: "var(--text-dim)", fontFamily: "var(--font)", fontSize: "14px", cursor: "pointer" },
   configSection: { display: "flex", flexDirection: "column", gap: "10px" },
   configSectionTitle: { fontSize: "11px", color: "var(--text-dim)", letterSpacing: "0.1em", textTransform: "uppercase", borderBottom: "1px solid var(--border)", paddingBottom: "8px" },
   configHint: { fontSize: "10px", color: "var(--text-muted)" },
   workerCountRow: { display: "flex", gap: "6px", flexWrap: "wrap" },
-  countBtn: { background: "var(--surface2)", border: "1px solid var(--border)", color: "var(--text-dim)", fontFamily: "var(--font)", fontSize: "12px", padding: "6px 14px", cursor: "pointer", borderRadius: "2px" },
+  countBtn: { background: "var(--surface2)", border: "1px solid var(--border)", color: "var(--text-dim)", fontFamily: "var(--font)", fontSize: "12px", padding: "6px 14px", cursor: "pointer", bord[...]
   countBtnActive: { background: "var(--green-dim)", border: "1px solid var(--green)", color: "var(--green)" },
   modelGrid: { display: "flex", flexWrap: "wrap", gap: "6px" },
-  modelChip: { background: "var(--surface2)", border: "1px solid var(--border)", color: "var(--text-dim)", fontFamily: "var(--font)", fontSize: "11px", padding: "6px 10px", cursor: "pointer", borderRadius: "2px" },
+  modelChip: { background: "var(--surface2)", border: "1px solid var(--border)", color: "var(--text-dim)", fontFamily: "var(--font)", fontSize: "11px", padding: "6px 10px", cursor: "pointer", bor[...]
   modelChipActive: { background: "var(--green-dim)", border: "1px solid var(--green)", color: "var(--green)" },
   modelChipProvider: { fontSize: "9px", opacity: 0.6, textTransform: "uppercase", letterSpacing: "0.05em" },
   modelChipLabel: { fontSize: "11px" },
   superAiRow: { display: "flex", flexDirection: "column", gap: "6px", padding: "10px", background: "var(--surface2)", borderRadius: "3px", border: "1px solid var(--border)" },
   superAiLabel: { fontSize: "11px", color: "var(--text-dim)" },
-  superAiSelect: { background: "var(--bg)", border: "1px solid var(--border2)", color: "var(--text)", fontFamily: "var(--font)", fontSize: "12px", padding: "6px 10px", borderRadius: "2px", outline: "none" },
+  superAiSelect: { background: "var(--bg)", border: "1px solid var(--border2)", color: "var(--text)", fontFamily: "var(--font)", fontSize: "12px", padding: "6px 10px", borderRadius: "2px", outlin[...]
   settingRow: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: "1px solid var(--border)" },
   settingLabel: { fontSize: "12px", color: "var(--text-dim)" },
   settingVal: { fontSize: "12px", color: "var(--text)" },
 };
+
