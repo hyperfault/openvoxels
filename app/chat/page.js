@@ -32,14 +32,14 @@ function ChatApp() {
   const messages = currentSession?.messages || [];
 
   useEffect(() => {
+    if (isGuest) return;
     const supabase = createClient();
-    if (!isGuest) {
-      supabase.auth.getUser().then(({ data }) => {
-        if (!data.user) { router.push("/"); return; }
-        setUser(data.user);
-        setUsername(data.user.user_metadata?.username || data.user.email?.split("@")[0] || "user");
-      });
-    }
+    if (!supabase) return;
+    supabase.auth.getUser().then(({ data }) => {
+      if (!data.user) { router.push("/"); return; }
+      setUser(data.user);
+      setUsername(data.user.user_metadata?.username || data.user.email?.split("@")[0] || "user");
+    });
   }, []);
 
   useEffect(() => {
@@ -120,7 +120,7 @@ function ChatApp() {
 
   async function signOut() {
     const supabase = createClient();
-    await supabase.auth.signOut();
+    if (supabase) await supabase.auth.signOut();
     router.push("/");
   }
 
@@ -130,7 +130,6 @@ function ChatApp() {
     <div style={c.layout}>
       {sidebarOpen && <div style={c.sidebarOverlay} onClick={() => setSidebarOpen(false)} />}
 
-      {/* Sidebar */}
       <div style={{ ...c.sidebar, ...(sidebarOpen ? c.sidebarVisible : {}) }}>
         <div style={c.sidebarHeader}>
           <span style={c.sidebarLogo}>openvoxels.</span>
@@ -154,9 +153,7 @@ function ChatApp() {
         </div>
       </div>
 
-      {/* Main */}
       <div style={c.chatArea}>
-        {/* Top bar */}
         <div style={c.topBar}>
           <button style={c.hamburger} onClick={() => setSidebarOpen(o => !o)}>☰</button>
           <span style={c.topBarPrompt}>[{username}@openvoxels]</span>
@@ -189,7 +186,6 @@ function ChatApp() {
           </div>
         </div>
 
-        {/* Messages */}
         <div style={c.messages}>
           {messages.length === 0 && (
             <div style={c.empty}>
@@ -232,7 +228,6 @@ function ChatApp() {
           <div ref={bottomRef} />
         </div>
 
-        {/* Input bar */}
         <div style={c.inputBar}>
           <button style={c.configBtn} onClick={() => setShowAiConfig(true)} title="AI configuration">⚙</button>
           <div style={c.inputPromptLabel}>[{username}@openvoxels]:</div>
@@ -254,7 +249,6 @@ function ChatApp() {
         </div>
       </div>
 
-      {/* AI Config Modal */}
       {showAiConfig && (
         <div style={c.overlay} onClick={() => setShowAiConfig(false)}>
           <div style={c.configModal} onClick={e => e.stopPropagation()}>
@@ -266,7 +260,6 @@ function ChatApp() {
               </div>
             </div>
 
-            {/* Worker count */}
             <div style={c.configSection}>
               <div style={c.configSectionTitle}>worker count</div>
               <div style={c.workerCountRow}>
@@ -283,7 +276,6 @@ function ChatApp() {
               <div style={c.configHint}>auto = tier 1→1, tier 2→3, tier 3→5 workers</div>
             </div>
 
-            {/* Worker models */}
             <div style={c.configSection}>
               <div style={c.configSectionTitle}>worker models</div>
               <div style={c.configHint}>select up to 5 · selected: {selectedWorkers.length}</div>
@@ -301,7 +293,6 @@ function ChatApp() {
               </div>
             </div>
 
-            {/* Super AI models */}
             <div style={c.configSection}>
               <div style={c.configSectionTitle}>super AI models</div>
               <div style={c.configHint}>core functions locked — only model changes</div>
@@ -328,7 +319,6 @@ function ChatApp() {
         </div>
       )}
 
-      {/* Settings Modal */}
       {showSettings && (
         <div style={c.overlay} onClick={() => setShowSettings(false)}>
           <div style={c.settingsModal} onClick={e => e.stopPropagation()}>
