@@ -40,7 +40,7 @@ function ChatApp() {
       setUser(data.user);
       setUsername(data.user.user_metadata?.username || data.user.email?.split("@")[0] || "user");
     });
-  }, []);
+  }, [router, isGuest]);
 
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -356,7 +356,7 @@ const c = {
   sidebarVisible: { transform: "translateX(0)" },
   sidebarHeader: { display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 16px", borderBottom: "1px solid var(--border)" },
   sidebarLogo: { fontSize: "13px", fontWeight: "700", color: "#d0d0d0" },
-  newChatBtn: { background: "none", border: "1px solid var(--border2)", color: "var(--text-dim)", fontFamily: "var(--font)", fontSize: "16px", width: "26px", height: "26px", cursor: "pointer", borderRadius: "3px", display: "flex", alignItems: "center", justifyContent: "center" },
+  newChatBtn: { background: "none", border: "1px solid var(--border2)", color: "var(--text-dim)", fontFamily: "var(--font)", fontSize: "16px", width: "26px", height: "26px", cursor: "pointer", borderRadius: "2px" },
   sessionList: { flex: 1, overflowY: "auto", padding: "8px", display: "flex", flexDirection: "column", gap: "2px" },
   sessionItem: { display: "flex", alignItems: "center", gap: "8px", padding: "7px 10px", borderRadius: "3px", cursor: "pointer", color: "var(--text-dim)", fontSize: "12px" },
   sessionActive: { background: "var(--surface2)", color: "var(--text)", border: "1px solid var(--border)" },
@@ -373,7 +373,7 @@ const c = {
   loadRow: { display: "flex", alignItems: "center", gap: "4px" },
   loadDot: { width: "5px", height: "5px", borderRadius: "50%", background: "var(--green)", display: "block", animation: "pulse 1s ease-in-out infinite" },
   loadText: { fontSize: "10px", color: "var(--text-muted)", marginLeft: "4px" },
-  avatarBtn: { width: "30px", height: "30px", borderRadius: "50%", background: "var(--surface2)", border: "1px solid var(--border2)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: "12px", fontWeight: "600", color: "var(--text)", flexShrink: 0 },
+  avatarBtn: { width: "30px", height: "30px", borderRadius: "50%", background: "var(--surface2)", border: "1px solid var(--border2)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "11px", fontWeight: "600", color: "var(--text)", cursor: "pointer", position: "relative" },
   menu: { position: "absolute", top: "40px", right: 0, background: "var(--surface)", border: "1px solid var(--border2)", borderRadius: "4px", width: "200px", zIndex: 100, overflow: "hidden", animation: "fadeUp 0.15s ease", boxShadow: "0 8px 32px rgba(0,0,0,0.4)" },
   menuHeader: { padding: "12px 14px" },
   menuName: { fontSize: "13px", color: "var(--text)", fontWeight: "500" },
@@ -398,9 +398,9 @@ const c = {
   thinkDot: { width: "5px", height: "5px", borderRadius: "50%", background: "var(--text-muted)", display: "block", animation: "pulse 1s ease-in-out infinite" },
   thinkText: { fontSize: "11px", color: "var(--text-muted)", fontStyle: "italic", marginLeft: "4px" },
   inputBar: { display: "flex", alignItems: "flex-end", gap: "8px", padding: "14px 20px 20px", borderTop: "1px solid var(--border)", background: "var(--surface)" },
-  configBtn: { background: "none", border: "1px solid var(--border2)", color: "var(--text-dim)", fontFamily: "var(--font)", fontSize: "16px", width: "42px", height: "42px", cursor: "pointer", borderRadius: "3px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 },
+  configBtn: { background: "none", border: "1px solid var(--border2)", color: "var(--text-dim)", fontFamily: "var(--font)", fontSize: "16px", width: "42px", height: "42px", cursor: "pointer", borderRadius: "3px" },
   inputPromptLabel: { fontSize: "12px", color: "var(--green)", paddingBottom: "10px", flexShrink: 0, whiteSpace: "nowrap" },
-  input: { flex: 1, background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: "3px", color: "var(--text)", fontFamily: "var(--font)", fontSize: "13px", padding: "10px 14px", resize: "none", outline: "none", lineHeight: 1.5, minHeight: "42px", maxHeight: "160px" },
+  input: { flex: 1, background: "var(--surface2)", border: "1px solid var(--border)", borderRadius: "3px", color: "var(--text)", fontFamily: "var(--font)", fontSize: "13px", padding: "10px 14px", resize: "none", outline: "none" },
   sendBtn: { background: "var(--surface2)", border: "1px solid var(--border2)", color: "var(--text)", fontFamily: "var(--font)", fontSize: "16px", width: "42px", height: "42px", cursor: "pointer", borderRadius: "3px", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 },
   overlay: { position: "fixed", inset: 0, background: "rgba(0,0,0,0.85)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 1000, backdropFilter: "blur(4px)", padding: "16px" },
   configModal: { background: "var(--surface)", border: "1px solid var(--border2)", borderRadius: "6px", padding: "24px", width: "100%", maxWidth: "560px", maxHeight: "85vh", overflowY: "auto", display: "flex", flexDirection: "column", gap: "20px", animation: "fadeUp 0.2s ease", boxShadow: "0 20px 60px rgba(0,0,0,0.5)" },
@@ -417,13 +417,13 @@ const c = {
   countBtn: { background: "var(--surface2)", border: "1px solid var(--border)", color: "var(--text-dim)", fontFamily: "var(--font)", fontSize: "12px", padding: "6px 14px", cursor: "pointer", borderRadius: "2px" },
   countBtnActive: { background: "var(--green-dim)", border: "1px solid var(--green)", color: "var(--green)" },
   modelGrid: { display: "flex", flexWrap: "wrap", gap: "6px" },
-  modelChip: { background: "var(--surface2)", border: "1px solid var(--border)", color: "var(--text-dim)", fontFamily: "var(--font)", fontSize: "11px", padding: "6px 10px", cursor: "pointer", borderRadius: "2px", display: "flex", flexDirection: "column", gap: "2px", textAlign: "left" },
+  modelChip: { background: "var(--surface2)", border: "1px solid var(--border)", color: "var(--text-dim)", fontFamily: "var(--font)", fontSize: "11px", padding: "6px 10px", cursor: "pointer", borderRadius: "2px" },
   modelChipActive: { background: "var(--green-dim)", border: "1px solid var(--green)", color: "var(--green)" },
   modelChipProvider: { fontSize: "9px", opacity: 0.6, textTransform: "uppercase", letterSpacing: "0.05em" },
   modelChipLabel: { fontSize: "11px" },
   superAiRow: { display: "flex", flexDirection: "column", gap: "6px", padding: "10px", background: "var(--surface2)", borderRadius: "3px", border: "1px solid var(--border)" },
   superAiLabel: { fontSize: "11px", color: "var(--text-dim)" },
-  superAiSelect: { background: "var(--bg)", border: "1px solid var(--border2)", color: "var(--text)", fontFamily: "var(--font)", fontSize: "12px", padding: "6px 10px", borderRadius: "2px", outline: "none", cursor: "pointer", width: "100%" },
+  superAiSelect: { background: "var(--bg)", border: "1px solid var(--border2)", color: "var(--text)", fontFamily: "var(--font)", fontSize: "12px", padding: "6px 10px", borderRadius: "2px", outline: "none" },
   settingRow: { display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: "1px solid var(--border)" },
   settingLabel: { fontSize: "12px", color: "var(--text-dim)" },
   settingVal: { fontSize: "12px", color: "var(--text)" },
