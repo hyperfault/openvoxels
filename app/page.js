@@ -21,6 +21,12 @@ export default function LandingPage() {
   const terminalRef = useRef(null);
 
   useEffect(() => {
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("/sw.js");
+    }
+  }, []);
+
+  useEffect(() => {
     if (demoIndex >= DEMO_LINES.length) {
       setTimeout(() => {
         setDisplayedLines([]);
