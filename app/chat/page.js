@@ -31,17 +31,33 @@ function ChatApp() {
   const currentSession = sessions.find(s => s.id === activeSession);
   const messages = currentSession?.messages || [];
 
-  useEffect(() => {
-    if (isGuest) return;
-    const supabase = createClient();
-    if (!supabase) return;
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data.user) return;
-      setUser(data.user);
-      setUsername(data.user.user_metadata?.username || data.user.email?.split("@")[0] || "user");
-    });
-  }, []);
+useEffect(() => {
+  if (isGuest) return;
+  const supabase = createClient();
+  if (!supabase) return;
 
+  supabase.auth.getSession().then(({ data: { session } }) => {
+    if (!session) return;
+    setUser(session.user);
+    setUsername(
+      session.user.user_metadata?.username ||
+      session.user.email?.split("@")[0] ||
+      "user"
+    );
+  });
+
+  const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+    if (!session) return;
+    setUser(session.user);
+    setUsername(
+      session.user.user_metadata?.username ||
+      session.user.email?.split("@")[0] ||
+      "user"
+    );
+  });
+
+  return () => subscription.unsubscribe();
+}, []);
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, loading]);
